@@ -41,4 +41,15 @@ class HipMRIDataset(Dataset):
         image = image_nii.get_fdata().astype(np.float32)
         mask = mask_nii.get_fdata().astype(np.uint8)
 
-        return image, mask
+        image_tensor = torch.from_numpy(image)
+        mask_tensor = torch.from_numpy(mask)
+
+        # Z-score normalization
+        mean = image_tensor.mean()
+        std = image_tensor.std()
+        if std > 1e-6:
+            image_tensor = (image_tensor - mean) / std
+        else:
+            image_tensor = image_tensor - mean
+
+        return image_tensor, mask_tensor
