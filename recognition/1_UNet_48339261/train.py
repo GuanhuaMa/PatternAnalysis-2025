@@ -21,8 +21,8 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
             
             # Forward pass
             outputs = model(images)
-            pred_pet = outputs[:, 0]  # (C, H, W)
-            loss = criterion(pred_pet, masks)
+            predictions_squeezed = outputs[:, 0]  # (C, H, W)
+            loss = criterion(predictions_squeezed, masks)
             
             # Backward pass
             optimizer.zero_grad()
