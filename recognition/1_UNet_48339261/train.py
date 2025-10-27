@@ -3,13 +3,11 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
 def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every=1):
-
-    losses = []
-
+    model.to(device)
     criterion = DiceLoss()
-
     optimizer = optim.Adam(model.parameters(), lr=lr)
-
+    
+    losses = []
     print(f"Train Starting for {epochs} epochs")
 
     for epoch in range(epochs):
@@ -36,6 +34,10 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
         avg_loss = epoch_loss / len(train_loader)
         losses.append(avg_loss)
         print(f"Epoch {epoch+1}/{epochs} Complete: Avg Loss = {avg_loss:.4f}")
+
+        # Visualize predictions after each epoch (or every few epochs)
+        if (epoch) % visualize_every == 0:
+            show_epoch_predictions(model, test_dataset, epoch + 1, n=3)
 
     print("Training complete with enhanced U-Net")
     return losses
