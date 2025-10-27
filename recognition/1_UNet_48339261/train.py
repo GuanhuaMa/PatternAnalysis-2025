@@ -5,10 +5,15 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
     for epoch in range(epochs):
         model.train() 
 
-        # TODO: batch loop
+        for batch_idx, (images, masks) in enumerate(train_loader):
 
-        # 打印一下这轮的训练成果
+            images = images.to(device)
+            masks = masks.to(device)
+
+            # TODO: forward and loss function
+            pass 
+
         print(f"Epoch {epoch+1}/{epochs} Complete")
 
-    print("Train")
-    return [] # 暂时返回一个空列表
+    print("Training complete with enhanced U-Net")
+    return [] 
