@@ -4,6 +4,7 @@ import nibabel as nib
 import numpy as np
 import os
 import glob
+import torch
 
 class HipMRIDataset(Dataset):
     def __init__(self, data_dir, prostate_label_value=5, resize_to=None):
