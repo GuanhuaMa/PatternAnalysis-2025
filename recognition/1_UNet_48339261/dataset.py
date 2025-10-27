@@ -58,7 +58,11 @@ class HipMRIDataset(Dataset):
             image_tensor = (image_tensor - mean) / std
         else:
             image_tensor = image_tensor - mean
-
-        binary_mask = (mask_tensor == self.prostate_label_value).long()
         
+        # (C, H, W)
+        binary_mask = (mask_tensor == self.prostate_label_value).long()
+
+        # mask shape to [H, W]
+        binary_mask = binary_mask.squeeze(0)
+
         return image_tensor, binary_mask
