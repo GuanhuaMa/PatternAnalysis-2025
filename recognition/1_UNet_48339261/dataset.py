@@ -8,6 +8,7 @@ import glob
 class HipMRIDataset(Dataset):
     def __init__(self, data_dir):
         self.data_dir = data_dir
+        self.prostate_label_value = prostate_label_value
 
         self.image_files = []
         self.mask_files = []
@@ -52,4 +53,6 @@ class HipMRIDataset(Dataset):
         else:
             image_tensor = image_tensor - mean
 
-        return image_tensor, mask_tensor
+        binary_mask = (mask_tensor == self.prostate_label_value).long()
+
+        return image_tensor, binary_mask
