@@ -1,5 +1,7 @@
 import torch
 from torch.utils.data import Dataset
+import nibabel as nib
+import numpy as np
 import os
 import glob
 
@@ -12,6 +14,7 @@ class HipMRIDataset(Dataset):
 
         image_paths = sorted(glob.glob(os.path.join(data_dir, "*_image.nii.gz")))
 
+        # match the Mask file according to the image name
         for img_path in image_paths:
             mask_path = img_path.replace("_image.nii.gz", "_mask.nii.gz")
             if os.path.exists(mask_path):
@@ -19,7 +22,7 @@ class HipMRIDataset(Dataset):
                 self.mask_files.append(mask_path)
 
         if len(self.image_files) == 0:
-            print(f"Warning: No matching files found in {data_dir}")
+            print(f"No matching files found in {data_dir}")
         else:
             print(f"Found {len(self.image_files)} image/mask pairs.")
 
@@ -29,5 +32,13 @@ class HipMRIDataset(Dataset):
     
 
     def __getitem__(self, idx):
+        image_path = self.image_files[idx]
+        mask_path = self.mask_files[idx]
 
-        return None
+        image_nii = nib.load(image_path)
+        mask_nii = nib.load(mask_path)
+
+        image = image_nii.get_fdata().astype(np.float32)
+        mask = mask_nii.get_fdata().astype(np.uint8)
+
+        return image, mask
