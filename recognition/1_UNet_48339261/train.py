@@ -2,6 +2,13 @@ import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
+from modules import DiceLoss, SimpleUNet
+import torch
+import numpy as np
+import matplotlib.pyplot as plt
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every=1):
     model.to(device)
     criterion = DiceLoss()
