@@ -45,6 +45,12 @@ class HipMRIDataset(Dataset):
         image_tensor = torch.from_numpy(image)
         mask_tensor = torch.from_numpy(mask)
 
+        # add chanel dimention
+        if image_tensor.ndim == 2:
+            image_tensor = image_tensor.unsqueeze(0) # 变为 [1, H, W]
+        if mask_tensor.ndim == 2:
+            mask_tensor = mask_tensor.unsqueeze(0)   # 变为 [1, H, W]
+
         # Z-score normalization
         mean = image_tensor.mean()
         std = image_tensor.std()
@@ -54,5 +60,5 @@ class HipMRIDataset(Dataset):
             image_tensor = image_tensor - mean
 
         binary_mask = (mask_tensor == self.prostate_label_value).long()
-
+        
         return image_tensor, binary_mask
