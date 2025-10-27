@@ -20,18 +20,6 @@ def calculate_dice_score(pred_binary, true_mask):
     return dice_score
 
 
-def plot_loss(losses):
-    """Plot train loss curve"""
-    plt.figure(figsize=(10, 5))
-    plt.plot(losses, label='Training Loss')
-    plt.title('Training Loss vs. Epochs')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss (Dice Loss)')
-    plt.legend()
-    plt.grid(True)
-    plt.show() 
-
-
 def show_epoch_predictions(model, dataset, epoch, n=3):
     """MRI"""
     model.eval()
@@ -61,6 +49,7 @@ def show_epoch_predictions(model, dataset, epoch, n=3):
             axes[1, i].axis('off')
 
             # Show prediction
+            dice = calculate_dice_score(pred_binary, true_mask)
             axes[2, i].imshow(pred_binary, cmap='gray')
             axes[2, i].set_title(f'Prediction') 
             axes[2, i].axis('off')
@@ -69,3 +58,17 @@ def show_epoch_predictions(model, dataset, epoch, n=3):
     plt.show()
 
     model.train()
+
+
+def plot_loss(losses):
+    """Plot train loss curve"""
+    plt.figure(figsize=(10, 5))
+    plt.plot(losses, label='Training Loss')
+    plt.title('Training Loss vs. Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss (Dice Loss)')
+    plt.legend()
+    plt.grid(True)
+    plt.show() 
+
+    
