@@ -34,35 +34,38 @@ def plot_loss(losses):
 
 def show_epoch_predictions(model, dataset, epoch, n=3):
     """MRI"""
+    model.eval()
 
     fig, axes = plt.subplots(3, n, figsize=(12, 9))
     fig.suptitle(f'Train the prediction results after the {epoch} round', fontsize=16)
 
-    indices = np.random.choice(len(dataset), n, replace=False)
+    with torch.no_grad():
+        indices = np.random.choice(len(dataset), n, replace=False)
 
-    for i, idx in enumerate(indices):
-        image, true_mask = dataset[idx] 
+        for i, idx in enumerate(indices):
+            image, true_mask = dataset[idx] 
+            pred = model(image.unsqueeze(0).to(device))
 
-        pred = model(image.unsqueeze(0).to(device)) 
+            pred_prob = pred[0, 0].cpu().numpy()
+            pred_binary = (pred_prob > 0.5).astype(int)
 
-        pred_prob = pred[0, 0].cpu().numpy()
-        pred_binary = (pred_prob > 0.5).astype(int)
+            # Show original image 
+            img_display = image.squeeze().cpu().numpy()
+            axes[0, i].imshow(img_display, cmap='gray')
+            axes[0, i].set_title(f'Original {idx})')
+            axes[0, i].axis('off')
 
-        # Show original image 
-        img_display = image.squeeze().cpu().numpy()
-        axes[0, i].imshow(img_display, cmap='gray')
-        axes[0, i].set_title(f'Original {idx})')
-        axes[0, i].axis('off')
+            # Show ground truth binary mask
+            axes[1, i].imshow(true_mask.cpu().numpy(), cmap='gray')
+            axes[1, i].set_title(f'Ground Truth (前列腺)')
+            axes[1, i].axis('off')
 
-        # Show ground truth binary mask
-        axes[1, i].imshow(true_mask.cpu().numpy(), cmap='gray')
-        axes[1, i].set_title(f'Ground Truth (前列腺)')
-        axes[1, i].axis('off')
-
-        # Show prediction
-        axes[2, i].imshow(pred_binary, cmap='gray')
-        axes[2, i].set_title(f'Prediction') 
-        axes[2, i].axis('off')
+            # Show prediction
+            axes[2, i].imshow(pred_binary, cmap='gray')
+            axes[2, i].set_title(f'Prediction') 
+            axes[2, i].axis('off')
 
     plt.tight_layout()
     plt.show()
+
+    model.train()
