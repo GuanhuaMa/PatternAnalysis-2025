@@ -1,14 +1,15 @@
-import torch
 from torch.utils.data import Dataset
+from torchvision import transforms
 import nibabel as nib
 import numpy as np
 import os
 import glob
 
 class HipMRIDataset(Dataset):
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, prostate_label_value=5, resize_to=None):
         self.data_dir = data_dir
         self.prostate_label_value = prostate_label_value
+        self.resize_to = resize_to
 
         self.image_files = []
         self.mask_files = []
@@ -45,11 +46,24 @@ class HipMRIDataset(Dataset):
         image_tensor = torch.from_numpy(image)
         mask_tensor = torch.from_numpy(mask)
 
-        # add chanel dimention
+        # add chanel dimention :[1, H, W]
         if image_tensor.ndim == 2:
-            image_tensor = image_tensor.unsqueeze(0) # 变为 [1, H, W]
+            image_tensor = image_tensor.unsqueeze(0) 
         if mask_tensor.ndim == 2:
-            mask_tensor = mask_tensor.unsqueeze(0)   # 变为 [1, H, W]
+            mask_tensor = mask_tensor.unsqueeze(0)   
+        
+        # resize
+        if self.resize_to:
+            image_tensor = transforms.functional.resize(
+                image_tensor, 
+                self.resize_to, 
+                interpolation=transforms.InterpolationMode.BILINEAR
+            )
+            mask_tensor = transforms.functional.resize(
+                mask_tensor, 
+                self.resize_to, 
+                interpolation=transforms.InterpolationMode.NEAREST
+            )
 
         # Z-score normalization
         mean = image_tensor.mean()
@@ -59,7 +73,6 @@ class HipMRIDataset(Dataset):
         else:
             image_tensor = image_tensor - mean
         
-        # (C, H, W)
         binary_mask = (mask_tensor == self.prostate_label_value).long()
 
         # mask shape to [H, W]
