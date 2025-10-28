@@ -20,6 +20,7 @@ class SimpleUNet(nn.Module):
 
         self.pool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.sigmoid = nn.Sigmoid()
 
     def _conv_block(self, in_ch, out_ch):
         return nn.Sequential(
@@ -44,6 +45,8 @@ class SimpleUNet(nn.Module):
         d2 = self.dec2(torch.cat([self.upsample(d3), e1], 1))
         out = self.dec1(d2)
 
+        out = self.sigmoid(out)
+
         return out
     
 
@@ -52,11 +55,10 @@ class DiceLoss(nn.Module):
         super(DiceLoss, self).__init__()
         self.smooth = smooth
 
-    def forward(self, logits, targets):
-        predictions = torch.sigmoid(logits) 
+    def forward(self, predictions, targets):
 
-        predictions = predictions.view(-1)
-        targets = targets.view(-1).float()
+        predictions = predictions.reshape(-1) 
+        targets = targets.reshape(-1).float()
 
         intersection = (predictions * targets).sum()
         dice_coeff = (2.0 * intersection + self.smooth) / (predictions.sum() + targets.sum() + self.smooth)
