@@ -41,3 +41,20 @@ class SimpleUNet(nn.Module):
         out = self.dec1(d2)
 
         return out
+    
+
+class DiceLoss(nn.Module):
+    def __init__(self, smooth=1e-6):
+        super(DiceLoss, self).__init__()
+        self.smooth = smooth
+
+    def forward(self, logits, targets):
+        predictions = torch.sigmoid(logits) 
+
+        predictions = predictions.view(-1)
+        targets = targets.view(-1).float()
+
+        intersection = (predictions * targets).sum()
+        dice_coeff = (2.0 * intersection + self.smooth) / (predictions.sum() + targets.sum() + self.smooth)
+
+        return 1 - dice_coeff
