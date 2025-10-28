@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 class SimpleUNet(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1):
+    def __init__(self, in_channels=1, out_channels=1, dropout_p=0.2):
         super().__init__()
 
         # Encoder (downsampling)
