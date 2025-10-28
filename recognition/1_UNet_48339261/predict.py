@@ -1,13 +1,57 @@
 import torch
 import os
-
+import matplotlib.pyplot as plt
+import numpy as np
+from utils import calculate_dice_score
 from modules import SimpleUNet
 from dataset import HipMRIDataset
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Predict.py: Using device: {device}")
 
+def show_predictions(model, dataset, title="Final segmentation results (HipMRI)", n=3):
+    model.eval() 
+    
+    fig, axes = plt.subplots(3, n, figsize=(12, 9))
+    fig.suptitle(title, fontsize=16, fontweight='bold')
+    
+    with torch.no_grad():
+        if len(dataset) < n:
+            n = len(dataset)
+            print(f"The siza of Dataset ({len(dataset)}) smaller than n ({n}), show {n} samples.")
+            
+        indices = np.random.choice(len(dataset), n, replace=False)
+        
+        for i, idx in enumerate(indices):
+            image, true_mask = dataset[idx]
 
+            pred = model(image.unsqueeze(0).to(device))
+
+            pred_prob = pred[0, 0].cpu().numpy()
+            pred_binary = (pred_prob > 0.5).astype(int)
+
+            # Orifinal (gray)
+            img_display = image.squeeze().cpu().numpy()
+            axes[0, i].imshow(img_display, cmap='gray')
+            axes[0, i].set_title(f'Original {idx})', fontweight='bold')
+            axes[0, i].axis('off')
+
+            # Ground Truth
+            axes[1, i].imshow(true_mask.cpu().numpy(), cmap='gray')
+            axes[1, i].set_title(f'Ground Truth (Prostate)', fontweight='bold')
+            axes[1, i].axis('off')
+
+            # Prediction
+            dice = calculate_dice_score(pred_binary, true_mask) 
+            axes[2, i].imshow(pred_binary, cmap='gray')
+            axes[2, i].set_title(f'Pridiction {dice:.3f})', fontweight='bold')
+            axes[2, i].axis('off')
+
+    plt.tight_layout()
+    save_path = "final_predictions.png"
+    plt.savefig(save_path)
+    print(f"Prediction Result saved in: {save_path}")
+    plt.close(fig)
 
 if __name__ == '__main__':
     print("Runing predict.py...")
