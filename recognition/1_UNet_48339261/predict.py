@@ -82,6 +82,3 @@ if __name__ == '__main__':
         show_predictions(model, test_dataset, n=NUM_EXAMPLES_TO_SHOW)
     else:
         print("Error: Dataset is empty.")
-
-
-    pass
