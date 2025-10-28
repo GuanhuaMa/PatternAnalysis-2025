@@ -2,6 +2,8 @@ import torch
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
+
 from utils import calculate_dice_score
 from modules import SimpleUNet
 from dataset import HipMRIDataset
@@ -23,10 +25,11 @@ def show_predictions(model, dataset, title="Final segmentation results (HipMRI)"
         indices = np.random.choice(len(dataset), n, replace=False)
         
         for i, idx in enumerate(indices):
+            # (1,H,W) & (H,W)
             image, true_mask = dataset[idx]
-
+            # (1,H,W) -> (1,1,H,W)
             pred = model(image.unsqueeze(0).to(device))
-
+            # (1,1,H,W) -> (H,W)
             pred_prob = pred[0, 0].cpu().numpy()
             pred_binary = (pred_prob > 0.5).astype(int)
 
@@ -62,5 +65,18 @@ if __name__ == '__main__':
     PROSTATE_LABEL = 5 
     NUM_EXAMPLES_TO_SHOW = 3
 
-    # visuliasation
+    print(f"Loading model: {MODEL_SAVE_PATH}")
+    model = SimpleUNet(in_channels=1, out_channels=1).to(device)
+
+    model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
+    
+    print(f"Loading dataset: {DATA_DIR}")
+    test_dataset = HipMRIDataset(
+        data_dir=DATA_DIR,
+        resize_to=RESIZE_TO,
+        prostate_label_value=PROSTATE_LABEL
+    )
+
+
+
     pass
