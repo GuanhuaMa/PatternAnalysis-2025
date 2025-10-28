@@ -1,3 +1,6 @@
+"""
+dataset.py
+"""
 from torch.utils.data import Dataset
 from torchvision import transforms
 import nibabel as nib
@@ -44,8 +47,8 @@ class HipMRIDataset(Dataset):
         image = image_nii.get_fdata().astype(np.float32)
         mask = mask_nii.get_fdata().astype(np.uint8)
 
-        image_tensor = torch.from_numpy(image)
-        mask_tensor = torch.from_numpy(mask)
+        image_tensor = torch.from_numpy(image.copy())
+        mask_tensor = torch.from_numpy(mask.copy())
 
         # add chanel dimention :[1, H, W]
         if image_tensor.ndim == 2:
