@@ -76,7 +76,12 @@ if __name__ == '__main__':
         resize_to=RESIZE_TO,
         prostate_label_value=PROSTATE_LABEL
     )
-
+    
+    if len(test_dataset) > 0:
+        print(f"Generating {NUM_EXAMPLES_TO_SHOW} prediction examples...")
+        show_predictions(model, test_dataset, n=NUM_EXAMPLES_TO_SHOW)
+    else:
+        print("Error: Dataset is empty.")
 
 
     pass
