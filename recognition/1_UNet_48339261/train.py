@@ -73,5 +73,35 @@ if __name__ == "__main__":
         resize_to=RESIZE_TO,
         prostate_label_value=PROSTATE_LABEL
     )
+    
+    val_size = int(len(dataset) * VALIDATION_SPLIT)
+    train_size = len(dataset) - val_size
+    
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size], 
+                                               generator=torch.Generator().manual_seed(42))
+    
+    print(f"Dataset split: {len(train_dataset)} training samples, {len(val_dataset)} validation samples")
 
-pass
+    train_loader = DataLoader(
+        train_dataset, 
+        batch_size=BATCH_SIZE, 
+        shuffle=True, 
+        num_workers=4 
+    )
+
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    
+    model = SimpleUNet(in_channels=1, out_channels=1).to(device)
+
+    training_losses = train(
+        model=model,
+        train_loader=train_loader,
+        test_dataset=val_dataset, 
+        epochs=EPOCHS,
+        lr=LEARNING_RATE,
+        visualize_every=5
+    )
+
+    print("Traning Complete")
+    torch.save(model.state_dict(), MODEL_SAVE_PATH)
+    print(f"Model saved in: {MODEL_SAVE_PATH}")
