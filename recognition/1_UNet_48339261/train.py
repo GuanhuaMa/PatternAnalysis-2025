@@ -53,3 +53,25 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
     print("Training complete with enhanced U-Net")
     plot_loss(losses)
     return losses
+
+
+if __name__ == "__main__":
+    
+    print(f"Starting training (train.py) ---")
+    
+    DATA_DIR = "/home/groups/comp3710/HipMRI_Study_open/keras_slices_data" 
+    MODEL_SAVE_PATH = "hipmri_unet_model.pth" 
+    EPOCHS = 20           
+    LEARNING_RATE = 0.001     
+    BATCH_SIZE = 16           
+    RESIZE_TO = (128, 128)  
+    PROSTATE_LABEL = 5      
+    VALIDATION_SPLIT = 0.2  
+
+    dataset = HipMRIDataset(
+        data_dir=DATA_DIR,
+        resize_to=RESIZE_TO,
+        prostate_label_value=PROSTATE_LABEL
+    )
+
+pass
