@@ -22,7 +22,7 @@ class SimpleUNet(nn.Module):
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
         self.sigmoid = nn.Sigmoid()
 
-    def _conv_block(self, in_ch, out_ch):
+    def _conv_block(self, in_ch, out_ch, dropout_p=0.2):
         return nn.Sequential(
             nn.Conv2d(in_ch, out_ch, 3, padding=1),
             nn.BatchNorm2d(out_ch),
