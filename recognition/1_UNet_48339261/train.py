@@ -4,6 +4,7 @@ train.py
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import random_split
 
 from modules import DiceLoss, SimpleUNet 
 from dataset import HipMRIDataset
