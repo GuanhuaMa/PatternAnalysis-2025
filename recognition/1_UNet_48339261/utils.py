@@ -1,3 +1,6 @@
+"""
+utils.py
+"""
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,8 +58,8 @@ def show_epoch_predictions(model, dataset, epoch, n=3):
             axes[2, i].axis('off')
 
     plt.tight_layout()
-    plt.show()
-
+    plt.savefig(f"epoch_{epoch}_predictions.png") 
+    plt.close(fig) 
     model.train()
 
 
@@ -69,6 +72,7 @@ def plot_loss(losses):
     plt.ylabel('Loss (Dice Loss)')
     plt.legend()
     plt.grid(True)
-    plt.show() 
+    plt.savefig("training_loss_curve.png") 
+    plt.close() 
 
     
