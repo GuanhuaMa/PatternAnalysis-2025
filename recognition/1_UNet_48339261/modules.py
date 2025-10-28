@@ -9,14 +9,14 @@ class SimpleUNet(nn.Module):
         super().__init__()
 
         # Encoder (downsampling)
-        self.enc1 = self._conv_block(in_channels, 32)
-        self.enc2 = self._conv_block(32, 64)
-        self.enc3 = self._conv_block(64, 128) 
+        self.enc1 = self._conv_block(in_channels, 32, dropout_p)
+        self.enc2 = self._conv_block(32, 64, dropout_p)
+        self.enc3 = self._conv_block(64, 128, dropout_p)
 
         # Decoder (upsampling)
-        self.dec3 = self._conv_block(128 + 64, 64)
-        self.dec2 = self._conv_block(64 + 32, 32)
-        self.dec1 = nn.Conv2d(32, out_channels, 1) 
+        self.dec3 = self._conv_block(128 + 64, 64, dropout_p)
+        self.dec2 = self._conv_block(64 + 32, 32, dropout_p)
+        self.dec1 = nn.Conv2d(32, out_channels, 1)
 
         self.pool = nn.MaxPool2d(2)
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
@@ -26,9 +26,11 @@ class SimpleUNet(nn.Module):
             nn.Conv2d(in_ch, out_ch, 3, padding=1),
             nn.BatchNorm2d(out_ch),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
+            nn.Dropout2d(dropout_p),
             nn.Conv2d(out_ch, out_ch, 3, padding=1),
             nn.BatchNorm2d(out_ch),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
+            nn.Dropout2d(dropout_p),
         )
 
     def forward(self, x):
