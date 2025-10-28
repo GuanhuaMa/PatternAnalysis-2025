@@ -1,12 +1,16 @@
+"""
+train.py
+"""
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
-from modules import DiceLoss, SimpleUNet
-import torch
+from modules import DiceLoss, SimpleUNet 
+from dataset import HipMRIDataset
+from utils import show_epoch_predictions, plot_loss, calculate_dice_score
+
 import numpy as np
 import matplotlib.pyplot as plt
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every=1):
@@ -47,4 +51,5 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
             show_epoch_predictions(model, test_dataset, epoch + 1, n=3)
 
     print("Training complete with enhanced U-Net")
+    plot_loss(losses)
     return losses
