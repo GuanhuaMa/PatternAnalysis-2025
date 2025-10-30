@@ -69,7 +69,7 @@ nibabel (!pip install nibabel)
 tqdm
 ```
 
-Due to the time queue in Rangpur is too long , so this project choose to run in the Goole Colab
+Due to the time queue in Rangpur is too long, so this project choose to run in the Goole Colab
 
 The files `modules.py`, `dataset.py`, `train.py`, `predict.py`, `utils.py` and `keras_slices_data` and `Run_on_Colab.ipynb` need to be in the same folder in Google Drive.
 
