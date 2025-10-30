@@ -48,7 +48,7 @@ def show_epoch_predictions(model, dataset, epoch, n=3):
 
             # Show ground truth binary mask
             axes[1, i].imshow(true_mask.cpu().numpy(), cmap='gray')
-            axes[1, i].set_title(f'Ground Truth (前列腺)')
+            axes[1, i].set_title(f'Ground Truth (Prostate)')
             axes[1, i].axis('off')
 
             # Show prediction
