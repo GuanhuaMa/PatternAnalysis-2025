@@ -42,21 +42,7 @@ class HipMRIDataset(Dataset):
 
         print(f"Success load {subset} set: find {len(self.image_files)} figure file。")
 
-
-        # match the Mask file according to the image name
-        for img_path in image_paths:
-            mask_path = img_path.replace("_image.nii.gz", "_mask.nii.gz")
-            if os.path.exists(mask_path):
-                self.image_files.append(img_path)
-                self.mask_files.append(mask_path)
-
-        if len(self.image_files) == 0:
-            print(f"No matching files found in {data_dir}")
-        else:
-            print(f"Found {len(self.image_files)} image/mask pairs.")
-
     def __len__(self):
-
         return len(self.image_files) 
     
 
