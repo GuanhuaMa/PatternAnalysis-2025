@@ -65,20 +65,25 @@ if __name__ == '__main__':
     PROSTATE_LABEL = 5 
     NUM_EXAMPLES_TO_SHOW = 3
 
-    print(f"Loading model: {MODEL_SAVE_PATH}")
-    model = SimpleUNet(in_channels=1, out_channels=1).to(device)
-
-    model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
-    
-    print(f"Loading dataset: {DATA_DIR}")
-    test_dataset = HipMRIDataset(
-        data_dir=DATA_DIR,
-        resize_to=RESIZE_TO,
-        prostate_label_value=PROSTATE_LABEL
-    )
-    
-    if len(test_dataset) > 0:
-        print(f"Generating {NUM_EXAMPLES_TO_SHOW} prediction examples...")
-        show_predictions(model, test_dataset, n=NUM_EXAMPLES_TO_SHOW)
+    # Chenk the file exists
+    if not os.path.exists(MODEL_SAVE_PATH):
+        print(f"Error: can't find file '{MODEL_SAVE_PATH}'。")
     else:
-        print("Error: Dataset is empty.")
+        print(f"Loading the model: {MODEL_SAVE_PATH}")
+        model = SimpleUNet(in_channels=1, out_channels=1).to(device)
+
+        model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
+        
+        print(f"Loading the test set: {DATA_DIR} (subset=test)")
+        test_dataset = HipMRIDataset(
+            data_dir=DATA_DIR,
+            subset="test",
+            resize_to=RESIZE_TO,
+            prostate_label_value=PROSTATE_LABEL
+        )
+        
+        if len(test_dataset) > 0:
+            print(f"Generating {NUM_EXAMPLES_TO_SHOW} prediction examples...")
+            show_predictions(model, test_dataset, n=NUM_EXAMPLES_TO_SHOW)
+        else:
+            print("Error: Dataset is empty.")
