@@ -67,8 +67,8 @@ if __name__ == "__main__":
     
     print(f"Starting training (train.py) ---")
     
-    DATA_DIR = "/home/groups/comp3710/HipMRI_Study_open/keras_slices_data" 
-    MODEL_SAVE_PATH = "hipmri_unet_model.pth" 
+    DATA_DIR = "/content/drive/MyDrive/Colab-Notebooks/UNet_task3_48339261/keras_slices_data" 
+    MODEL_SAVE_PATH = "/content/drive/MyDrive/Colab-Notebooks/UNet_task3_48339261/hipmri_unet_model.pth"
 
     EPOCHS = 20           
     LEARNING_RATE = 0.001     
