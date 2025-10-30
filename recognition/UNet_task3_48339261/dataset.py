@@ -1,5 +1,10 @@
 """
 dataset.py
+Gemini-Assist: 
+1. Suggested using .copy() to resolve negative stride error. This ensures
+the numpy array is contiguous before tensor conversion.
+2. Mask resize use NEAREST interpolation to prevent corrupting the (0, 1) label values. 
+Using BILINEAR would create invalid fractional values.
 """
 from torch.utils.data import Dataset
 import nibabel as nib
