@@ -4,17 +4,19 @@ train.py
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
-from torch.utils.data import random_split
-
 from modules import DiceLoss, SimpleUNet 
 from dataset import HipMRIDataset
 from utils import show_epoch_predictions, plot_loss, calculate_dice_score
-
+from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every=1):
+def train(model, train_loader, val_dataset, epochs=3, lr=0.001, visualize_every=1):
+    """
+    param val_dataset: validation set
+    """
     model.to(device)
     criterion = DiceLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -25,15 +27,18 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
     for epoch in range(epochs):
         model.train() 
         epoch_loss = 0
+        
+        # show process bar
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{epochs}", leave=True)
 
-        for batch_idx, (images, masks) in enumerate(train_loader):
+        for batch_idx, (images, masks) in enumerate(progress_bar):
 
             images = images.to(device)
             masks = masks.to(device)
             
             # Forward pass
             outputs = model(images)
-            predictions_squeezed = outputs[:, 0]  # (C, H, W)
+            predictions_squeezed = outputs[:, 0]
             loss = criterion(predictions_squeezed, masks)
             
             # Backward pass
@@ -42,19 +47,21 @@ def train(model, train_loader, test_dataset, epochs=3, lr=0.001, visualize_every
             optimizer.step()
 
             epoch_loss += loss.item()
+            
+            # show batch loss in prcocess bar
+            progress_bar.set_postfix(batch_loss=f"{loss.item():.4f}")
 
         avg_loss = epoch_loss / len(train_loader)
         losses.append(avg_loss)
         print(f"Epoch {epoch+1}/{epochs} Complete: Avg Loss = {avg_loss:.4f}")
 
-        # Visualize predictions after each epoch (or every few epochs)
-        if (epoch) % visualize_every == 0:
-            show_epoch_predictions(model, test_dataset, epoch + 1, n=3)
+        # visualization
+        if (epoch + 1) % visualize_every == 0 or (epoch + 1) == epochs:
+            show_epoch_predictions(model, val_dataset, epoch + 1, n=3)
 
     print("Training complete with enhanced U-Net")
     plot_loss(losses)
     return losses
-
 
 if __name__ == "__main__":
     
@@ -62,47 +69,54 @@ if __name__ == "__main__":
     
     DATA_DIR = "/home/groups/comp3710/HipMRI_Study_open/keras_slices_data" 
     MODEL_SAVE_PATH = "hipmri_unet_model.pth" 
+
     EPOCHS = 20           
     LEARNING_RATE = 0.001     
     BATCH_SIZE = 16           
     RESIZE_TO = (128, 128)  
-    PROSTATE_LABEL = 5      
-    VALIDATION_SPLIT = 0.2  
+    PROSTATE_LABEL = 5     
 
-    dataset = HipMRIDataset(
+    # load and split dataset
+    print(f"Loading dataset from {DATA_DIR} ...")
+    
+    # load the split train dataset
+    train_dataset = HipMRIDataset(
         data_dir=DATA_DIR,
+        subset="train",
         resize_to=RESIZE_TO,
         prostate_label_value=PROSTATE_LABEL
     )
     
-    val_size = int(len(dataset) * VALIDATION_SPLIT)
-    train_size = len(dataset) - val_size
+    # load the split validate dataset
+    val_dataset = HipMRIDataset(
+        data_dir=DATA_DIR,
+        subset="validate",
+        resize_to=RESIZE_TO,
+        prostate_label_value=PROSTATE_LABEL
+    )
     
-    train_dataset, val_dataset = random_split(dataset, [train_size, val_size], 
-                                               generator=torch.Generator().manual_seed(42))
-    
-    print(f"Dataset split: {len(train_dataset)} training samples, {len(val_dataset)} validation samples")
+    print(f"Dataset loaded {len(train_dataset)} train dataset, {len(val_dataset)} validate sataset")
 
+    # DataLoader
     train_loader = DataLoader(
         train_dataset, 
         batch_size=BATCH_SIZE, 
         shuffle=True, 
-        num_workers=4 
+        num_workers=2 
     )
 
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
-    
     model = SimpleUNet(in_channels=1, out_channels=1).to(device)
 
+    # start training
     training_losses = train(
         model=model,
         train_loader=train_loader,
-        test_dataset=val_dataset, 
+        val_dataset=val_dataset,
         epochs=EPOCHS,
         lr=LEARNING_RATE,
-        visualize_every=5
+        visualize_every=5 
     )
 
-    print("Traning Complete")
+    print("Training Complete")
     torch.save(model.state_dict(), MODEL_SAVE_PATH)
-    print(f"Model saved in: {MODEL_SAVE_PATH}")
+    print(f"Model saved to: {MODEL_SAVE_PATH}")
