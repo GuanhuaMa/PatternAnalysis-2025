@@ -71,13 +71,13 @@ tqdm
 
 Due to the time queue in Rangpur is too long , so this project choose to run in the Goole Colab
 
-The files 'modules.py', 'dataset.py', 'train.py', 'predict.py', 'utils.py' and 'keras_slices_data' need to be in the same folder in Google Drive.
+The files `modules.py`, `dataset.py`, `train.py`, `predict.py`, `utils.py` and `keras_slices_data` and `Run_on_Colab.ipynb` need to be in the same folder in Google Drive.
 
-Also, create another colab.ipynb file to run this code in the same folder.
+Open the `Run_on_Colab.ipynb` and run for the whole task.
 
-Make sure that the path is /content/drive/MyDrive/Colab-Notebooks/UNet_task3_48339261/modules.py, for example for modules.py.
+Make sure that the path is /content/drive/MyDrive/Colab-Notebooks/UNet_task3_48339261/modules.py, for example for `modules.py`. 
 
-Run this code can process the whole task.
+This is the processing code in  `Run_on_Colab.ipynb`. 
 
 ```
 # Run Task 3 in Google Colab
