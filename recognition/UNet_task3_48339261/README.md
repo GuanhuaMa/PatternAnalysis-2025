@@ -113,7 +113,7 @@ print("final_predictions.png")
 
 The training loss (Dice Loss) over time is shown below in Figure 1. The loss steadily decreases from an initial average of 0.6089 and successfully converges to a final average loss of 0.1496. This indicates that the model learned effectively from the training data.
 
-![training_loss_curve (1)]((https://raw.githubusercontent.com/GuanhuaMa/PatternAnalysis-2025/topic-recognition/recognition/UNet_task3_48339261/training_loss_curve (1).png)
+![training_loss_curve]((https://raw.githubusercontent.com/GuanhuaMa/PatternAnalysis-2025/topic-recognition/recognition/UNet_task3_48339261/training_loss_curve.png)
 
 [Figure 1: Training loss curve]
 
@@ -121,7 +121,7 @@ The training loss (Dice Loss) over time is shown below in Figure 1. The loss ste
 
 The figure below shows the final segmentation performance of the model on 3 random samples from the test set after training for 20 epochs.
 
-![final_predictions](https://raw.githubusercontent.com/GuanhuaMa/PatternAnalysis-2025/topic-recognition/recognition/UNet_task3_48339261/final_predictions (1).png)
+![final_predictions](https://raw.githubusercontent.com/GuanhuaMa/PatternAnalysis-2025/topic-recognition/recognition/UNet_task3_48339261/final_predictions.png)
 
 [Figure 2: Final predictions]
 
