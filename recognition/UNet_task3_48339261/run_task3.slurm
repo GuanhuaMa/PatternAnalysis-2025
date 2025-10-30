@@ -4,7 +4,7 @@
 #SBATCH --output=task3_job_%j.out   
 #SBATCH --error=task3_job_%j.err   
 
-#SBATCH --partition=gpu            
+#SBATCH --partition=comp3710    
 #SBATCH --gres=gpu:1                
 #SBATCH --nodes=1                   
 #SBATCH --ntasks-per-node=1        
