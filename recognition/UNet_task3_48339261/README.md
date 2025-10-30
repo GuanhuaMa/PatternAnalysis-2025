@@ -18,7 +18,7 @@ These are Project Files:
 
 - `modules.py`: Contains the definitions for the `SimpleUNet` model architecture and the `DiceLoss` function.
 - `dataset.py`: Contains the `HipMRIDataset` class, responsible for loading and preprocessing the Nifti data.
-- `train.py`: Contains the main training loop `train()`, the train/validation split logic, and the `if __name__ == "__main__":` entry point.
+- `train.py`: Contains the main training loop `train()`, the train/validation split logic.
 - `predict.py`: Contains the `show_predictions()` function to load the trained model and visualize its performance on test samples.
 - `utils.py`: Contains helper functions such as `calculate_dice_score()`, `show_epoch_predictions()`, and `plot_loss()`.
 - `README.md`: The report document for this project.
