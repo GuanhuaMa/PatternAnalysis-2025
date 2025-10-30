@@ -1,5 +1,8 @@
 """
 utils.py
+
+Gemini assist:
+plt.show() hangs in Colab. Need to use plt.savefig() and plt.close()
 """
 import torch
 import numpy as np
