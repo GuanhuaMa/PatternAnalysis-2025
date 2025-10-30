@@ -1,5 +1,7 @@
 """
 modules.py
+
+cite: UNet_segmentation_code_demo.ipynb
 """
 import torch
 import torch.nn as nn
